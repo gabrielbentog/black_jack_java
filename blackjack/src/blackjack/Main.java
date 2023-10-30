@@ -1,9 +1,13 @@
 package blackjack;
+import models.BlackJack;
 
 public class Main {
 
 	public static void main(String[] args) {
-		System.out.println("First Commit");
+		
+		BlackJack game = new BlackJack();
+		
+		game.start();
 
 	}
 
