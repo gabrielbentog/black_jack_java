@@ -7,16 +7,19 @@ public class BlackJack {
 	private int qnt_users;
 	private ArrayList<Player> players;
 	private Deck deck;
-	
+	private Dealer dealer = new Dealer();
 	public void start() {
 		System.out.println("You're started the BLACKJACK!");
 		System.out.println("");
 		createPlayers();
 		deck = new Deck();
+		shuffleDeck();
+        dealInitialCards();
+        showHands();
 	}
 	
 	private void createPlayers() {
-        boolean inputValid = false;
+        boolean valid = false;
 
         do {
             try {
@@ -24,7 +27,7 @@ public class BlackJack {
                 qnt_users = scan.nextInt();
                 scan.nextLine(); // Limpa a quebra de linha após a leitura do número
                 if (qnt_users >= 1 && qnt_users <= 8) {
-                    inputValid = true;
+                    valid = true;
                 } else {
                     System.out.println("Por favor, insira um número entre 1 e 8.");
                 }
@@ -32,9 +35,8 @@ public class BlackJack {
                 System.out.println("Entrada inválida. Por favor, insira um número inteiro válido.");
                 scan.nextLine(); // Limpa a entrada incorreta
             }
-        } while (!inputValid);
+        } while (!valid);
 
-		
 		players = new ArrayList<Player>();
 		
 		for (int i = 0; i < qnt_users ; i++) {
@@ -51,7 +53,30 @@ public class BlackJack {
 		}
 	}
 	
-	private void shuffle_deck() {
+	private void shuffleDeck() {
 		deck.shuffle();
 	}
+	
+    private void dealInitialCards() {
+    	for (int j = 0; j < 2; j++) {
+            for (Player player : players) {
+            	if (player.getBank() > 0)
+            	{
+            		deck.dealCard(player.getHand());
+            	}
+            }
+        	deck.dealCard(dealer.getHand());
+    	}
+    }
+    
+    private void showHands() {
+        System.out.println("\nEstado inicial das mãos dos jogadores:");
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            System.out.print(player.getName() + ": ");
+            player.showHand();
+        }
+        System.out.print("Dealer: ");
+        dealer.showHand();
+    }
 }
