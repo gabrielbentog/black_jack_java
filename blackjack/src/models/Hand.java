@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
-    private List<Card> cards;
+    List<Card> cards;
 
     public Hand() {
         this.cards = new ArrayList<>();

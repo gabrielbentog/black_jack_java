@@ -8,6 +8,7 @@ public class BlackJack {
 	private ArrayList<Player> players;
 	private Deck deck;
 	private Dealer dealer = new Dealer();
+
 	public void start() {
 		System.out.println("You're started the BLACKJACK!");
 		System.out.println("");
@@ -15,7 +16,8 @@ public class BlackJack {
 		deck = new Deck();
 		shuffleDeck();
         dealInitialCards();
-        showHands();
+        // showHands();
+        dealer.showFirstCard();
 	}
 	
 	private void createPlayers() {
