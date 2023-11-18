@@ -10,14 +10,37 @@ public class BlackJack {
 	private Dealer dealer = new Dealer();
 
 	public void start() {
-		System.out.println("You're started the BLACKJACK!");
-		System.out.println("");
-		createPlayers();
-		deck = new Deck();
-		shuffleDeck();
-        dealInitialCards();
-        // showHands();
-        dealer.showFirstCard();
+		try {
+			System.out.println("You're started the BLACKJACK!");
+			System.out.println("");
+			createPlayers();
+			deck = new Deck();
+			shuffleDeck();
+	        dealInitialCards();
+	        // showHands();
+	        dealer.showFirstCard();
+	        
+	        for (Player player : players) {
+	            boolean win = playerTurn(player);
+	            if (win) { 
+	            	break; 
+	            } else {
+	            	Player winner = determineWinner(players, dealer);
+
+	                // Exibir resultado
+	                if (winner != null) {
+	                    System.out.println("O vencedor é: " + winner.getName());
+	                } else {
+	                    System.out.println("Nenhum vencedor. O dealer ganha.");
+	                }
+	            }
+	        }
+	        
+	        dealerTurn();
+		} catch(Exception e) {
+			System.out.println("Ocorreu um erro durante o jogo: " + e.getMessage());
+            e.printStackTrace();
+		}
 	}
 	
 	private void createPlayers() {
@@ -80,5 +103,91 @@ public class BlackJack {
         }
         System.out.print("Dealer: ");
         dealer.showHand();
+    }
+
+    private boolean playerTurn(Player player) {
+        System.out.println("\nTurno do jogador: " + player.getName());
+
+        boolean playerBusted = false;
+        while (true) {
+            player.showHand();
+            int total = player.calculateHandValue();
+            System.out.println("Total: " + total);
+            if (total == 21) {
+                System.out.println("Você fez um Blackjack natural! Parabéns!");
+                return true;
+            }
+            System.out.print("Escolha (1 - Pedir carta / 2 - Parar): ");
+            int choice = scan.nextInt();
+
+            if (choice == 1) {
+                deck.dealCard(player.getHand());
+                int playerTotal = player.calculateHandValue();
+                if (playerTotal > 21) {
+                    System.out.println("Estourou! Total: " + playerTotal);
+                    playerBusted = true;
+                    break;
+                }
+            } else if (choice == 2) {
+                break;
+            } else {
+                System.out.println("Escolha inválida. Tente novamente.");
+            }
+        }
+
+        if (playerBusted) {
+            System.out.println(player.getName() + " estourou!");
+            return false;
+        } else {
+            System.out.println(player.getName() + " parou.");
+            return false;
+        }
+    }
+
+    private void dealerTurn() {
+        System.out.println("\nTurno do dealer:");
+
+        dealer.showHand();
+        int dealerTotal = dealer.calculateHandValue();
+
+        // O dealer deve pedir cartas até alcançar 17 ou mais
+        while (dealerTotal < 17) {
+            System.out.println("Dealer pede mais uma carta...");
+            deck.dealCard(dealer.getHand());
+
+            dealer.showHand();
+            dealerTotal = dealer.calculateHandValue();
+        }
+
+        if (dealerTotal > 21) {
+            System.out.println("Dealer estourou! Total: " + dealerTotal);
+        } else {
+            System.out.println("Dealer parou. Total: " + dealerTotal);
+        }
+    }
+    
+    private Player determineWinner(ArrayList<Player> players, Dealer dealer) {
+        Player winner = null;
+        int dealerTotal = dealer.calculateHandValue();
+
+        // Se o dealer estourar, qualquer jogador que não estourar vence
+        if (dealerTotal > 21) {
+            for (Player player : players) {
+                if (player.calculateHandValue() <= 21) {
+                    winner = player;
+                    break;
+                }
+            }
+        } else {
+            int maxValidTotal = 0; // Armazena o máximo total válido entre jogadores
+            for (Player player : players) {
+                int playerTotal = player.calculateHandValue();
+                if (playerTotal <= 21 && playerTotal > maxValidTotal) {
+                    maxValidTotal = playerTotal;
+                    winner = player;
+                }
+            }
+        }
+        return winner;
     }
 }

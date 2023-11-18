@@ -15,7 +15,7 @@ public class Hand {
     
     public void printHand() {
         for (Card card : cards) {
-            System.out.println("Naipe: " + card.getSuit() + ", Valor: " + card.getValue());
+            System.out.println(card.getValueName() + " de " + card.getSuit());
         }
     }
 }
